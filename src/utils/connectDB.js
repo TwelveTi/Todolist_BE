@@ -4,7 +4,7 @@ const db = require("../models");
 const connectDB = async () => {
   try {
     await db.sequelize.authenticate();
-    await db.sequelize.sync(); 
+    await db.sequelize.sync({ alter: true });
   } catch (err) {
     console.error(" Lỗi kết nối database:", err);
     process.exit(1); // Dừng chương trình nếu lỗi

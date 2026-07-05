@@ -11,17 +11,33 @@ module.exports = (sequelize, DataTypes) => {
       title: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [1, 120],
+        },
       },
 
       description: {
         type: DataTypes.TEXT,
-        allowNull: true,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [1, 500],
+        },
       },
 
       status: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
+      },
+
+      taskDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        validate: {
+          isDate: true,
+        },
       },
     },
     {

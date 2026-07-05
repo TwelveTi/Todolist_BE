@@ -2,6 +2,25 @@ const taskService = require("../services/taskService");
 const APIResponse = require("../utils/APIResponse");
 
 class TaskController {
+  handleError(res, error) {
+    if (
+      error.name === "SequelizeValidationError" ||
+      error.name === "SequelizeUniqueConstraintError"
+    ) {
+      return APIResponse.error(
+        res,
+        error.errors?.[0]?.message || "Validation error",
+        400
+      );
+    }
+
+    const statusCode = error.statusCode || 500;
+    const message =
+      statusCode === 500 ? "Internal server error" : error.message;
+
+    return APIResponse.error(res, message, statusCode);
+  }
+
   async createTask(req, res) {
     try {
       const task = await taskService.createTask(req.body);
@@ -13,7 +32,7 @@ class TaskController {
         201
       );
     } catch (error) {
-      return APIResponse.error(res, error.message, 500);
+      return this.handleError(res, error);
     }
   }
 
@@ -27,7 +46,7 @@ class TaskController {
         tasks
       );
     } catch (error) {
-      return APIResponse.error(res, error.message, 500);
+      return this.handleError(res, error);
     }
   }
 
@@ -41,7 +60,7 @@ class TaskController {
         task
       );
     } catch (error) {
-      return APIResponse.error(res, error.message, 404);
+      return this.handleError(res, error);
     }
   }
 
@@ -58,7 +77,7 @@ class TaskController {
         task
       );
     } catch (error) {
-      return APIResponse.error(res, error.message, 404);
+      return this.handleError(res, error);
     }
   }
 
@@ -71,7 +90,7 @@ class TaskController {
         result.message
       );
     } catch (error) {
-      return APIResponse.error(res, error.message, 404);
+      return this.handleError(res, error);
     }
   }
 }
